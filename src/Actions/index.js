@@ -20,7 +20,7 @@ export default function Actions() {
     const URL = "https://dev--w257x4m.us.auth0.com/api/v2"
 
     const getClients = () => {
-    fetch(`${URL}/api/v2/clients?fields=client_id%2Cname`, requestOptions)
+    fetch(`${URL}/clients?fields=client_id%2Cname`, requestOptions)
         .then(response => response.json())
         .then(result => result.map(client => ({id: client.client_id, name:client.name})))
         .then(clients => setArrClients(clients))
