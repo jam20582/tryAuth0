@@ -4,7 +4,7 @@ import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
 import { useAuth0} from '@auth0/auth0-react';
 import loading from './Images/loading.gif';
-import Actions from './ActionsTable';
+import Actions from './Actions/index.js';
 
 function App() {
   const { isAuthenticated, user, isLoading } = useAuth0();
@@ -26,7 +26,7 @@ function App() {
         </div>
       </div> : 
       <div>
-        <h1>Hi stranger! please log in to identify yourself</h1>
+        <h1>Hi stranger! Please Login to identify yourself</h1>
         <LoginButton />
       </div>}
     </div>

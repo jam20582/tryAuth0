@@ -17,24 +17,26 @@ export default function Actions() {
     headers: myHeaders,
     };
 
-    //const getClients = () => {
-    const promise1 =   fetch("https://dev--w257x4m.us.auth0.com/api/v2/clients?fields=client_id%2Cname", requestOptions)
+    const URL = "https://dev--w257x4m.us.auth0.com/api/v2"
+
+    const getClients = () => {
+    fetch(`${URL}/api/v2/clients?fields=client_id%2Cname`, requestOptions)
         .then(response => response.json())
         .then(result => result.map(client => ({id: client.client_id, name:client.name})))
         .then(clients => setArrClients(clients))
         .catch(error => console.log('error', error));
-    //}
+    }
     
-    //const getActions = () => {
-      const promise2 = fetch("https://dev--w257x4m.us.auth0.com/api/v2/actions/actions", requestOptions)
+    const getActions = () => {
+      fetch(`${URL}/actions/actions`, requestOptions)
           .then(response => response.json())
           .then(result => setArrActions(result.actions.map(action => ({id: action.id, name: action.name, code: action.code, triggers: action.supported_triggers.map(trigger => trigger.id)}))))
           .catch(error => console.log('error', error));
-      //}
+    }
 
-    const promise3 = () => {
+    const getUserRole = () => {
       const userID = user.sub;
-      return fetch(`https://dev--w257x4m.us.auth0.com/api/v2/users/${userID}/roles`, requestOptions)
+      return fetch(`${URL}/users/${userID}/roles`, requestOptions)
           .then(response => response.json())
           .then(response => response.map(role => role.name))
           .then(roles => setUserRole(roles))
@@ -69,7 +71,7 @@ export default function Actions() {
             arrClients.filter((client) => action.code.search(client.id) !== -1 || action.code.search(client.name) !== -1)
               return {
                 action: action.name, 
-                cliente: client.length > 0 ? client[0].name : "Todas las aplicaciones"
+                cliente: client.length > 0 ? client[0].name : "Apply to all clients"
               }
         });
         setArrActionsByClient(arrFinal);
@@ -85,14 +87,11 @@ export default function Actions() {
       }
 
       useEffect(() => {
-        // getClients();
-        // getActions();
-        // getUserRole();
         if (loading) {
-          Promise.all([promise1, promise2, promise3()])
-            .then(() => {
-              setLoading(false);
-            })
+          getClients();
+          getActions();
+          getUserRole();         
+          setLoading(false);
         }
       }, [])
   return (
@@ -101,10 +100,10 @@ export default function Actions() {
     <div>{arrClients.map(name => <div key={name}>{name}</div>)}</div>
     <button onClick={getActions}>TRAER ACCIONES</button>
     <div>{arrActions.map(action => <div key={action.id}>{action.name}</div>)}</div> */}
-    <button onClick={getMatch}>TRAER APLICACIONES Y ACCIONES</button>
-    <div>{arrActionsByClient.map(action => <div key={action.action}>Aplicacion: {action.cliente} - Accion: {action.action}</div>)}</div>
-    {userRole.includes("Manager") ? <button onClick={showTriggers}>TRIGGERS</button> : null}
-    <div>{triggers.map(trigger => <div key={trigger.action}>Accion: {trigger.action} - Trigger: {trigger.triggers}</div>)}</div>
+    <button onClick={getMatch}>Get Clients and Actions</button>
+    <div>{arrActionsByClient.map(action => <div key={action.action}>Client: {action.cliente} - Action: {action.action}</div>)}</div>
+    {userRole.includes("Manager") ? <button onClick={showTriggers}>Show Triggers</button> : null}
+    <div>{triggers.map(trigger => <div key={trigger.action}>Action: {trigger.action} - Trigger: {trigger.triggers}</div>)}</div>
     {/* <div>{arrActionsByClient.map(action => <div key={action.client}>{action.client} - {action.action}</div>)}</div>
     <div>{arrActionsAllClients.map(action => <div key={action.client}>{action.client} - {action.action}</div>)}</div> */}
     </>
